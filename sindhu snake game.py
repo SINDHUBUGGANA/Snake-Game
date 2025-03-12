@@ -15,27 +15,37 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (213, 50, 80)
 BLACK = (0, 0, 0)
+BLUE = (50, 153, 213)
+YELLOW = (255, 255, 102)
 
 # Snake and game settings
 BLOCK_SIZE = 10
-SPEED = 15
+SPEEDS = {"Easy": 10, "Medium": 15, "Hard": 20}
 
 # Font
 font = pygame.font.SysFont("bahnschrift", 25)
 
+# Load high score
+try:
+    with open("highscore.txt", "r") as f:
+        high_score = int(f.read())
+except:
+    high_score = 0
+
 def draw_snake(block_size, snake_list):
     for block in snake_list:
-        pygame.draw.rect(win, GREEN, [block[0], block[1], block_size, block_size])
+        pygame.draw.rect(win, GREEN, [block[0], block[1], block_size, block_size], border_radius=3)
 
 def show_message(msg, color, x, y):
     message = font.render(msg, True, color)
     win.blit(message, [x, y])
 
-def display_score(score):
-    score_text = font.render("Score: " + str(score), True, WHITE)
+def display_score(score, high_score):
+    score_text = font.render(f"Score: {score}  High Score: {high_score}", True, YELLOW)
     win.blit(score_text, [10, 10])
 
 def game_loop():
+    global high_score
     game_over = False
     game_close = False
     
@@ -49,13 +59,18 @@ def game_loop():
     food_y = round(random.randrange(0, HEIGHT - BLOCK_SIZE) / 10.0) * 10.0
     
     score = 0
+    
+    # Choose difficulty
+    difficulty = "Medium"  # Change this to "Easy", "Medium", or "Hard"
+    speed = SPEEDS[difficulty]
+    
     clock = pygame.time.Clock()
     
     while not game_over:
         while game_close:
-            win.fill(BLACK)
+            win.fill(BLUE)
             show_message("You Lost! Press C to Play Again or Q to Quit", RED, WIDTH // 6, HEIGHT // 3)
-            display_score(score)
+            display_score(score, high_score)
             pygame.display.update()
             
             for event in pygame.event.get():
@@ -85,9 +100,9 @@ def game_loop():
         if x >= WIDTH or x < 0 or y >= HEIGHT or y < 0:
             game_close = True
         
-        win.fill(BLACK)
-        pygame.draw.rect(win, RED, [food_x, food_y, BLOCK_SIZE, BLOCK_SIZE])
-        display_score(score)
+        win.fill(BLUE)
+        pygame.draw.rect(win, RED, [food_x, food_y, BLOCK_SIZE, BLOCK_SIZE], border_radius=3)
+        display_score(score, high_score)
         
         snake_head = [x, y]
         snake_list.append(snake_head)
@@ -106,8 +121,13 @@ def game_loop():
             food_y = round(random.randrange(0, HEIGHT - BLOCK_SIZE) / 10.0) * 10.0
             snake_length += 1
             score += 10
+            
+            if score > high_score:
+                high_score = score
+                with open("highscore.txt", "w") as f:
+                    f.write(str(high_score))
         
-        clock.tick(SPEED)
+        clock.tick(speed)
     
     pygame.quit()
     quit()
