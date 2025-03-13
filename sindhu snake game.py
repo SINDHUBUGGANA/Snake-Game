@@ -25,6 +25,25 @@ SPEEDS = {"Easy": 10, "Medium": 15, "Hard": 20}
 # Font
 font = pygame.font.SysFont("bahnschrift", 25)
 
+def main_menu():
+    win.fill(BLACK)
+    show_message("Snake Game", YELLOW, WIDTH // 3, HEIGHT // 5)
+    show_message("Press S to Start", WHITE, WIDTH // 3, HEIGHT // 3)
+    show_message("Press Q to Quit", WHITE, WIDTH // 3, HEIGHT // 2.5)
+    pygame.display.update()
+    
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s:
+                    return  # Start the game
+                elif event.key == pygame.K_q:
+                    pygame.quit()
+                    quit()
+
 def choose_difficulty():
     win.fill(BLACK)
     show_message("Choose Difficulty: 1-Easy  2-Medium  3-Hard", YELLOW, WIDTH // 6, HEIGHT // 3)
@@ -62,6 +81,10 @@ def game_loop():
     except:
         high_score = 0
     
+    main_menu()
+    difficulty = choose_difficulty()
+    speed = SPEEDS[difficulty]
+    
     game_over = False
     game_close = False
     
@@ -73,9 +96,6 @@ def game_loop():
     
     food_x = round(random.randrange(0, WIDTH - BLOCK_SIZE) / 10.0) * 10.0
     food_y = round(random.randrange(0, HEIGHT - BLOCK_SIZE) / 10.0) * 10.0
-    
-    difficulty = choose_difficulty()
-    speed = SPEEDS[difficulty]
     
     score = 0
     clock = pygame.time.Clock()
