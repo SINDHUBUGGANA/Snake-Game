@@ -25,12 +25,23 @@ SPEEDS = {"Easy": 10, "Medium": 15, "Hard": 20}
 # Font
 font = pygame.font.SysFont("bahnschrift", 25)
 
-# Load high score
-try:
-    with open("highscore.txt", "r") as f:
-        high_score = int(f.read())
-except:
-    high_score = 0
+def choose_difficulty():
+    win.fill(BLACK)
+    show_message("Choose Difficulty: 1-Easy  2-Medium  3-Hard", YELLOW, WIDTH // 6, HEIGHT // 3)
+    pygame.display.update()
+    
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1:
+                    return "Easy"
+                elif event.key == pygame.K_2:
+                    return "Medium"
+                elif event.key == pygame.K_3:
+                    return "Hard"
 
 def draw_snake(block_size, snake_list):
     for block in snake_list:
@@ -45,7 +56,12 @@ def display_score(score, high_score):
     win.blit(score_text, [10, 10])
 
 def game_loop():
-    global high_score
+    try:
+        with open("highscore.txt", "r") as f:
+            high_score = int(f.read())
+    except:
+        high_score = 0
+    
     game_over = False
     game_close = False
     
@@ -58,12 +74,10 @@ def game_loop():
     food_x = round(random.randrange(0, WIDTH - BLOCK_SIZE) / 10.0) * 10.0
     food_y = round(random.randrange(0, HEIGHT - BLOCK_SIZE) / 10.0) * 10.0
     
-    score = 0
-    
-    # Choose difficulty
-    difficulty = "Medium"  # Change this to "Easy", "Medium", or "Hard"
+    difficulty = choose_difficulty()
     speed = SPEEDS[difficulty]
     
+    score = 0
     clock = pygame.time.Clock()
     
     while not game_over:
