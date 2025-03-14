@@ -17,3 +17,9 @@ YELLOW = (255, 255, 102)
 # Initialize Font
 pygame.font.init()
 font = pygame.font.SysFont("bahnschrift", 25)
+
+# Initialize Sounds
+pygame.mixer.init()
+pygame.mixer.music.load("assets/background_music.mp3")  # Background Music
+pygame.mixer.music.play(-1)  # Loop indefinitely
+
